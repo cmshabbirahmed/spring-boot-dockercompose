@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: docker
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/LearnSQL?allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 2025@BesantTechnologies
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true

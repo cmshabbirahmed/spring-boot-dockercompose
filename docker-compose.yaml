@@ -1,0 +1,33 @@
+services:
+
+  app:
+    build: .
+    image: spring-boot-dockercompose:latest
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/LearnSQL?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 2025@BesantTechnologies
+
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0.27
+
+    environment:
+      MYSQL_ROOT_PASSWORD: 2025@BesantTechnologies
+      MYSQL_DATABASE: LearnSQL
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p2025@BesantTechnologies"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
