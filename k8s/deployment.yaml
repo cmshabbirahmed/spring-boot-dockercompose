@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: spring-boot-dockercompose
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: spring-boot-dockercompose
+
+  template:
+    metadata:
+      labels:
+        app: spring-boot-dockercompose
+
+    spec:
+      containers:
+        - name: spring-boot-dockercompose
+          image: cmshabbirahmed/spring-boot-dockercompose:latest
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://db:3306/LearnSQL?allowPublicKeyRetrieval=true&useSSL=false"
+
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_ROOT_PASSWORD
+
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              value: "update"
+
+            - name: SPRING_JPA_SHOW_SQL
+              value: "true"
