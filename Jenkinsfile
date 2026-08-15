@@ -1,4 +1,5 @@
 pipeline {
+
     agent any
 
     stages {
@@ -18,6 +19,32 @@ pipeline {
         stage('Docker Build') {
             steps {
                 bat 'docker build -t spring-boot-dockercompose:latest .'
+            }
+        }
+
+        stage('Docker Hub Push') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASS'
+                    )
+                ]) {
+                    bat '''
+                        echo %DOCKERHUB_PASS% | docker login -u %DOCKERHUB_USER% --password-stdin
+
+                        docker tag spring-boot-dockercompose:latest cmshabbirahmed/spring-boot-dockercompose:latest
+
+                        docker tag spring-boot-dockercompose:latest cmshabbirahmed/spring-boot-dockercompose:%BUILD_NUMBER%
+
+                        docker push cmshabbirahmed/spring-boot-dockercompose:latest
+
+                        docker push cmshabbirahmed/spring-boot-dockercompose:%BUILD_NUMBER%
+
+                        docker logout
+                    '''
+                }
             }
         }
 
